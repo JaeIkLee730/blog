@@ -26,9 +26,9 @@ permalink: /:year/:month/:day/:title.html
 
 timezone: "Asia/Seoul"
 
-url: "https://jaeiklee730.github.io/blog" # the base hostname & protocol for your site
+url: "https://jaeiklee730.github.io" # the base hostname & protocol for your site
 # url: "http://0.0.0.0:4000" # the base hostname & protocol for your site
-baseurl: ""
+baseurl: "/blog"
 #mailchimp: "http://eepurl.com/cywDtP"
 #feedly: "http://bit.ly/2A8Dkav"
 #used to display twitter cards
