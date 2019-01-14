@@ -1,0 +1,31 @@
+---
+layout: post
+title: "OS-HW2"
+categories: Homework
+---
+
+### 1. fork()
+- 현재 프로세스에 대해 복사본 프로세스 생성
+- child는 parent의, fork된 시점에서의 복사본이다
+- BUT, global variab le조차 공유하지 않는 완전히 독립된 프로세스이다
+
+### 2. mac -> 다른 서버로 파일 전송
+~~~ bash
+MackbookPro $ scp [전송할 파일 또는 디렉토리] [파일이 전송될 서버:저장될 디렉토리]
+~~~
+ex)
+
+~~~ bash
+MackbookPro $ scp hw_21200574.c 21200574@203.252.106.100:/home/ECE321/21200574/HW2/
+~~~
+
+### 3. tgz
+
+#### 3.1. 압축하기
+~~~ bash
+tar cvf - [file_1] [file_2] [file_3] | gzip > [output_file_name].tgz”
+~~~
+#### 3.2. 압축풀기
+~~~ bash
+gunzip –c [output_file_name].tgz | tar xvf –
+~~~

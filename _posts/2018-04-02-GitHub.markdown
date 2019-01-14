@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Git Error"
+---
+
+Git
+===
+
+#### ! [rejected] master -> master (non-fast forward)
+
+##### 1. 원인
+>현재 작업중인 local repository가 server의 repository보다 오래된 내용일 경우, push하면 서버에 있는 최신 내용은 날라가고 현재 작업한 내용만 적용이 되는 문제가 발생할 수 있기 때문에 error가 발생한다.
+
+##### 2. Solution
+> 1) 최신내용을 Local에 적용한 후 올리기: ```git pull``` 명령을 이용하면 기존 작업한 내용에 최신 내용을 덧붙이게  다.(Local에 자동으로 최신 소스가 Merge됨.) 만약 덧붙이는 과정에서 conflict가 발생한 경우, 그 안에 어느 부분이 conflict가 발생했는지가 나오기 때문에 잘 확인해서 소스를 수정한 후 다시 올리면 된다.
+> 2) 강제 삽입하기 (추천하지 않음. 다른 사람이 작업한 소스가 삭제 됨.): ```git push --force```
+
+
+####
+
+github에 새로운 프로젝트를 푸시하기 위해서 아래와 같이 pull 명령어를 실행했더니 에러가 표시되었다.
+
+
+>> git pull origin master
+
+-- fatal: refusing to merge unrelated histories
+
+
+이럴 경우 아래와 같이 옵션을 주어 pull 받도록 하자
+
+git pull origin branchname --allow-unrelated-histories
+
+이렇게 에러가 떨어지는 이유는 아래와 같다고 한다..... (시간날떄 해석을....)
+
+"git merge" used to allow merging two branches that have no common base by default, which led to a brand new history of an existing project created and then get pulled by an unsuspecting maintainer, which allowed an unnecessary parallel history merged into the existing project. The command has been taught not to allow this by default, with an escape hatch "--allow-unrelated-histories" option to be used in a rare event that merges histories of two projects that started their lives independently.
+
+
+
+
+출처: http://devx.tistory.com/entry/git-push-시-오류메세지-발생원인 [Meta Developer Story]
+
+출처: http://cpdev.tistory.com/51 [하루하나]

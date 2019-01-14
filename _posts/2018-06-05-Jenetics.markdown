@@ -1,0 +1,151 @@
+---
+layout: post
+title: "Jenetics Library"
+---
+
+Jenetics
+===
+
+---
+
+**출처:**
+"Introduction to Jenetics Library," Baeldung, 2017-04-11 수정, 2018-06-05 접속, [http://www.baeldung.com/jenetics](http://www.baeldung.com/jenetics)
+
+**번역: shinbaram730**
+
+---
+
+## 1. 개요
+유전 알고리즘적 아이디어를 설명하는 것을 목적으로 하며 대표적인 구현사례들을 소개한다.
+여러가지 최적화 문제를 푸는 데에 사용될 수 있는 강력한 자바 라이브러리, ```Jenetics```에 대하여 얘기할 것이다. 
+
+## 2. 작동 방식
+```Jenetics```의 공식 문서에 따르면, ```Jenetics```는 자바로 쓰여진 진화 알고리즘 기반 라이브러리이다. 진화 알고리즘은 생물학에 그 뿌리를 두고 있어 그 메커니즘 또한 생물의 진화에서 영감을 받은 것들이다. 예를 들면, reproduction, mutation, recombination 그리고 selection 같은 것들 말이다. 
+
+
+<br>
+<br>
+<br>
+
+---
+
+<유전자, 염색체, DNA>
+-	유전자 (Gene)
+ 	유전 정보를 구성하는 기본 단위, 유전정보 그 자체
+ 	DNA안에서 어떤 기능을 하는 DNA 구간
+ 	각각 다른 크기를 갖지만 평균 6천개 정도의 염기로 이루어짐
+-	DNA (Deoxyribo Nucleic Acid - 핵산, 물질)
+ 	세포의 핵 안에 존재하는 유전 물질
+ 	A,T,G,C 네가지 종류의 염기로 구성
+ 	염기의 연결 순서 - 유전적 특징 결정
+ 	염색체 안에 실타래처럼 감겨 압축적으로 보관됨
+-	염색체(Chromosome)
+ 	유전정보는 평상시에는 세포의 핵 안에 실처럼 풀어져 존재
+ 	세포분열시 유전정보를 담기 위해 생기는 막대모양 구조물
+ 	DNA + 히스톤 단백질
+-	대립 유전자(Allele)
+ 	쌍이 될 수 있는 대립형질의 유전자, 상동염색체의 서로 대응하는 부위
+ 	우성은 대문자, 열성은 소문자 ex) aAbb
+- 적합성 (fitness)
+- 유전자형 (Genotype)
+- 표현형 (Phenotype)
+
+Ex) 인간
+-	염색체 : 총 23쌍, 46개
+-	DNA : 약 30억쌍의 뉴클리오티드로 이루어짐
+-	2만 5천개 정도의 유전자를 가짐
+
+---
+**enum**:
+관련이 있는 constant들의 집합.
+
+**enum을 이용한 상수 정의**
+~~~ java
+enum Day{  
+    MONDAY,TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY;
+}
+
+enum Month{  
+    JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, 
+    AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER;
+}
+~~~
+**enum class와 constructor**
+
+~~~ java
+public enum RoadSide {  
+    //
+    Left("왼쪽"),
+    Right("오른쪽"); 
+
+    private String krName;
+
+    private RoadSide() {
+        //
+    } 
+
+    private RoadSide(String krName) {
+        this.krName = krName; 
+    }
+
+    public String getKrName() {
+        return krName; 
+    }
+}
+~~~
+- enum type class는 고정된 constant들의 집합으로써 run-time이 아닌 compile-time에 모든 값을 알 수 있어야 한다. 즉, 다른 class에서 접근하여 동적으로 값을 정해줄 수 없다. 그래서 constructor의 접근자가 ```private```이 되는 것이다. 
+
+기본적으로 Enum type E는
+- extends Enum<E>
+- implements Comparable<E>
+- 자체의 객체만을 대상으로 비교할 수 있다. 비교할때는 순서 값으로 비교한다.
+ 
+
+---
+```Gene```의 implements:
+- ```AnyGene```
+- ```BitGene```: 
+- ```CharacterGene```
+- ```DoubleGene```
+- ```EnumGene```
+- ```IntegerGene```
+- ```LongGene```
+
+
+```Chromosome```의 implementations
+- ```BoundedChromosome<Long,LongGene>```
+- ```Chromosome<LongGene>```
+- ```NumericChromosome<Long,LongGene>```
+- ```Factory<Chromosome<LongGene>>```
+- ```Verifiable```
+- ```Serializable```
+- ```Iterable<LongGene>```
+- ```RandomAccess```
+
+
+```Genotype```
+- 중심이 되는 class
+- evolution ```Engine```이 이 위에서 돌아간다. 
+- 각각의 구조적이고 immutable한 representative임
+- immutability: 객체가 생성된 이후 그 상태를 변경할 수 없는 디자인 패턴
+- n개 까지의 Chromosome으로 이루어져 있다.
+- 모든 Chromosome들은 같은 ```Gene``` type의 파라미터를 받도록 되어있지만 다른 길이와 조건을 갖는 것은 가능
+
+
+- Two levels
+    - representation of the solution
+    - solution itself
+- genotype is a lower-level (i.e. less abstracted) encoding than the phenotype
+- there can generally be multiple genotypes that map to the same phenotype,
+
+
+
+
+
+
+
+
+
+
+
+

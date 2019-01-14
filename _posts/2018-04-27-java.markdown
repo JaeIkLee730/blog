@@ -1,0 +1,101 @@
+---
+layout: post
+title: "Java"
+---
+
+Java Error
+===
+
+### 1. "오류: 기본 클래스 [class_name].class을(를) 찾거나 로드할 수 없습니다."
+
+-> 폴더나 package를 만들어서 관리를 하고 있을 경우 오류가 생길 확률이 높음
+
+나의 경우, package 구조가 다음과 같았다.
+
+![현재 package 구조](/img/2018-04-27-java_package_structure.jpg){:class="img-responsive"}
+
+
+![현재 package 구조](/img/2018-04-27-java_compile_fail.jpg){:class="img-responsive"}
+
+#### 원인
+>java 프로그램에서는 package name이 모두 포함된 full class name을 가지고 class file들을 찾기 때문
+
+#### So,
+>[ java - ] command는 package의 parent directory에서 실행한다.
+
+~~~ bash
+$ java [package_name].[class_name]
+~~~
+
+![현재 package 구조](/img/2018-04-27-java_compile_success.png){:class="img-responsive"}
+
+
+### 2. parseInt, valuOf
+
+#### Integer.parseInt( String s )
+returns int
+
+#### Integer.valueOf( String s )
+returns new Integer 객체
+
+#### Error
+다음과 같은 상황에서는 예외처리를 해주지 않으면 오류가 뜬다.
+Integer.parseInt("1234") <-- 정상
+Integer.parseInt("12a4") <-- 오류
+Integer.parseInt(null) <-- 오류
+Integer.parseInt("") <-- 오류
+
+### 3. array의 복사
+
+#### <u>assign operator</u> "==" vs <u>Object.clone() </u>
+~~~ java
+mport java.util.* ;
+import java.awt.* ;
+
+public class Test
+{
+    public static void main( String [] args ) {
+
+        Integer [] arr = new Integer[30] ;
+        Integer [] arrCopied ;
+        Integer [] arrCloned ;
+
+        for( int i=0; i<20; i++ )
+            arr[i] = i ;
+
+        for( int i=0; i<20; i++ )
+            System.out.print(arr[i] + " ") ;
+
+        arrCopied = arr ;
+        arrCloned = arr.clone() ;
+
+
+        for( int i=0; i<20; i++ )
+            arr[i] = i+10 ;   
+
+        for( int i=0; i<20; i++ )
+            System.out.print(arr[i] + " ") ;
+        for( int i=0; i<20; i++ )
+            System.out.print(arrCopied[i] + " ") ;
+        for( int i=0; i<20; i++ )
+            System.out.print(arrCloned[i] + " ") ;
+    }   
+}
+~~~
+
+![assign-1](/img/2018-04-27-java-assign-1.png){:class="img-responsive"}
+
+- "==" 사용: 원본이 변경되면 복사본도 변경
+- clone(): 원본이 변경되어도 사본 유지
+<br>
+~~~ java
+for( int i=0; i<20; i++ )
+    System.out.print(arr[i] + " ") ;
+
+arrCopied = arr ;
+arrCloned = arr.clone() ;
+arr = new Integer[30] ; // 추가
+~~~
+
+![assign-2](/img/2018-04-27-java-assign-2.png){:class="img-responsive"}
+- 둘 다 유지

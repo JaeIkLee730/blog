@@ -1,0 +1,644 @@
+---
+layout: post
+title: "Segfault"
+---
+
+Segfault
+===
+
+[180501_Algorithm_HW4](# 180501 삽질노트_Algorithm_HW4) <br>
+[180419_OS_HW4](### 전체코드)
+
+# 180501 삽질노트_Algorithm_HW4
+{:toc}
+### 전체 코드
+
+
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#define row 20
+#define col 20
+#define BUFF_SIZE 200
+#define file_name "hw4.data"
+
+typedef struct Vertex{
+    int vertex_name ;   // A, B, C,.....
+    int visited ;       // T/F ;
+    struct Vertex * next ;
+} Vertex ;
+
+typedef struct Graph {
+    Vertex * vertices ;
+    int VertexCount ;
+} Graph ;
+
+
+typedef struct Edge {
+    Vertex * from ;
+    Vertex * to ;
+} Edge ;
+
+void fileToArr( char *** adj, int * num_row, int * num_col ) ;
+void arrToMatrix( char *** adj, const char * buff,
+                    const int num_row, const int num_col ) ;
+void destroyMatrix( char ** adj, const int num_row ) ;
+void printMatrix( char ** adj, const int num_row, const int num_col ) ;
+
+int main() {
+
+    // TODO: convert the fix-sized array into dynamic allocating array
+    // depnending on the data - row, col size
+    char ** adj ;
+    int i=0, j=0 ;
+    int num_row=0, num_col=0 ;
+
+    fileToArr( &adj, &num_row, &num_col ) ;
+
+    printMatrix( adj, num_row, num_col ) ;
+
+    destroyMatrix( adj, num_row) ;
+
+    return 0 ;
+
+}
+
+void fileToArr( char *** adj, int * num_row, int * num_col ) {
+
+    printf("fileToArr()\n") ;
+
+    int i=0, j=0 ;
+    char ch, buff[BUFF_SIZE] ;
+    FILE *fp ;
+
+    // read the graph from hw4.data
+    // 'r' is read mode
+    fp = fopen(file_name, "r") ;
+
+    if (fp == NULL) {
+        perror("Error while opening the file.\n") ;
+        exit(EXIT_FAILURE) ;
+    }
+
+    // read into 1-d array
+    while( (ch=fgetc(fp))!=EOF ) {
+        if( ch=='1' || ch=='0' )
+            buff[(i++)] = ch ;
+        if( ch==13 && *num_col==0 )
+            *num_col = i ;
+    }
+
+    *num_row = (i+1)/(*num_col) ;
+    buff[i] = EOF ;
+    fclose(fp) ;
+
+    arrToMatrix( adj, buff, *num_row, *num_col );
+
+}
+
+
+void arrToMatrix( char *** adj, const char * buff,
+                    const int num_row, const int num_col ) {
+
+    int i=0, j=0 ;
+
+    // parse into 2-d array
+    // create adjacency matrix
+    *adj = (char**)malloc( sizeof(char*)*(num_row) ) ;
+
+    for( i=0; i<num_row; i++ ) {
+        (*adj)[i] = (char*)malloc( sizeof(char)*(num_col) ) ;
+        for( j=0; j<num_col; j++ )
+            (*adj)[i][j] = buff[i*num_row+j] ;
+    }
+}
+
+void destroyMatrix( char ** adj, const int num_row ) {
+
+    printf("destroyMatrix()\n") ;
+    int i=0 ;
+
+    for( i=0; i<num_row; i++ ) {
+        free( adj[i] ) ;
+        printf("free(adj[%d])\n", i) ;
+    }
+    free(adj) ;
+}
+
+void printMatrix( char ** adj, const int num_row, const int num_col ) {
+
+    int i=0, j=0;
+
+    // print out the matrix
+    for( i=0; i<num_row; i++ ) {
+        for( j=0; j<num_col; j++ )
+            printf("%c\t", adj[i][j]) ;
+        printf("\n") ;
+    }
+
+}
+```
+
+### 원인
+>adj를 main에서 allocate하지 않고 function parameter로 보낸 후 allocation 했었는데 이 때는 reading의 목적이 아니라 값 변경의 목적이라 adj의 주소값을 passing해줘야 하는 거였던 것 같다.
+
+---
+<br><br>
+
+
+
+# 180419 삽질노트_OS_HW4
+{:.toc}
+
+### 전체 코드
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
+
+#include <pthread.h>
+
+void Display(int dim, float *mat);
+void Fill(int size, float *data);
+void MatMul(int dim, float *A, float *B, float *Product);
+void MatMul_MT(int dim, float *A, float *B, float *Product, int noThread);
+
+int main(int argc, char *argv[])
+{
+    // initial value of # of dim, Thread
+    int dim = 10;
+    int noThread = 10;
+
+    // structure storing time info
+    struct timeval t1, t2;
+    float elapsed_time = 0.F;
+
+    if(argc < 2){
+        printf("Usage: %s <dim> <no_threads>\n", argv[0]);
+        exit(0);
+    }
+
+    dim = atoi(argv[1]);
+    if(dim > 1000)
+        // dimension limitation
+        dim = 1000;
+    noThread = atoi(argv[2]);
+
+
+    srand(time(NULL));
+
+    // 1-dimensional arrays of float type
+    float *A = (float*)malloc(dim * dim * sizeof(float));
+    float *B = (float*)malloc(dim * dim * sizeof(float));
+    float *Product = (float*)malloc(dim * dim * sizeof(float));
+
+    // catch memory allocation error
+    if(A == NULL || B == NULL || Product == NULL){
+        printf("Failed to allocate memory.\n");
+        exit(-1);
+    }
+
+    // fill(initialize the array with integers - 0,1,2....)
+    Fill(dim * dim, A);
+    Fill(dim * dim, B);
+
+    // show the array
+    // only for that of under 10-dimensional
+    if(dim <= 10){
+        printf("A = \n");
+        Display(dim, A);
+
+        printf("B = \n");
+        Display(dim, B);
+    }
+
+    // int gettimeofday(struct timeval *tv, struct timezone *tz);
+    // get the current time in microseconds
+    // to measure how much time did it take to compute
+    // t2-t1 = elapsed time
+    gettimeofday(&t1, NULL);
+
+    // multiplication of two matrices in single thread
+    MatMul(dim, A, B, Product);
+
+    gettimeofday(&t2, NULL);
+    elapsed_time = (t2.tv_sec + t2.tv_usec / 1000000.)
+    - (t1.tv_sec + t1.tv_usec / 1000000.);
+    printf("elapsed time (single thread)\t= %15f sec\n", elapsed_time);
+
+
+    // show the time taken to compute
+    // only for that of under 10-dimensional
+    // case of single thread
+    if(dim <= 10){
+        printf("A * B (single thread) = \n");
+        Display(dim, Product);
+    }
+
+    gettimeofday(&t1, NULL);
+
+    // multiplication of two matrices in multiple thread
+    MatMul_MT(dim, A, B, Product, noThread);
+
+    gettimeofday(&t2, NULL);
+    elapsed_time = (t2.tv_sec + t2.tv_usec / 1000000.)
+    - (t1.tv_sec + t1.tv_usec / 1000000.);
+    printf("elapsed time (%d threads)\t= %15f sec\n",
+           noThread, elapsed_time);
+
+    // show the time taken to compute
+    // only for that of under 10-dimensional
+    // case of n-thread
+    if(dim <= 10){
+        printf("A * B (%d threads) = \n", noThread);
+        Display(dim, Product);
+    }
+
+
+    free(A);
+    free(B);
+    free(Product);
+
+    return 0;
+}
+
+// Display the mtrics elements
+void Display(int dim, float *mat)
+{
+    if(dim >= 10)
+        return;
+    for(int i = 0; i < dim; i++){
+        for(int j = 0; j < dim; j++)
+            printf("%.2f ", mat[i * dim + j]);
+        printf("\n");
+    }
+}
+
+// Fill the matrics elements
+void Fill(int size, float *data)
+{
+
+    int i = 0;
+    for(i = 0; i < size; i++)
+        data[i] = i;
+}
+
+// Multiply two Matrics A, B -> Product
+void MatMul(int dim, float *A, float *B, float *Product)
+{
+    int i = 0, j = 0, k = 0;
+
+    for(i = 0; i < dim; i++){
+        for(j = 0; j < dim; j++){
+            // initialization of the arr element to 0.F
+            Product[i * dim + j] = 0.F;
+            // multiplication of A[i-th row] X B[j-th column]
+            for(k = 0; k < dim; k++)
+                Product[i * dim + j] += A[i * dim + k] * B[k * dim + j];
+        }
+    }
+
+}
+
+// ThreadInfo-type
+typedef struct {
+    int id;                    // thread index
+    int noThread;
+    int dim;
+    float *A, *B, *Product;
+} ThreadInfo;
+
+void* MatMul_ThreadFn(void *param);
+
+void MatMul_MT(int dim, float *A, float *B, float *Product, int noThread)
+{
+
+    int i = 0 ;
+    int j = 0 ;
+    // dynamically allocate pthread_t-type array whose length is noThread
+    pthread_t * tid = (pthread_t *)malloc( sizeof(pthread_t)*noThread );
+    // dynamically allocate ThreadInfo-type array whose length is noThread
+    ThreadInfo * threadInfo = (ThreadInfo *)malloc( sizeof(ThreadInfo)*noThread );
+
+    // Repeat for noThread times
+    for( i=0; i<noThread; i++ ) {
+        // Fill threadInfo[i] with appropriate values
+        // threadInfo[i].id = i : i-th thread
+        threadInfo[i].id = i ;
+        threadInfo[i].noThread = noThread ;
+        threadInfo[i].dim = dim ;
+
+        threadInfo[i].A = A ;
+        threadInfo[i].B = B ;
+        threadInfo[i].Product = Product;
+        // create child thread passing &aThreadInfo[i] to the thread function
+        pthread_create( &(tid[i]), NULL, MatMul_ThreadFn, &(threadInfo[i]) ) ;
+    }
+
+    // wait for the children threads to terminate
+    for( j=0; j<noThread; j++ ) {
+        // call pthread_join t-times
+        pthread_join(tid[j], NULL) ;
+    }
+
+    // deallocate pthread_t and ThreadInfo array
+    free(tid) ;
+    free(threadInfo) ;
+}
+
+void* MatMul_ThreadFn(void *param)        // thread function
+{
+    ThreadInfo *pInfo = (ThreadInfo *)param;
+
+    int id = pInfo->id ;
+    int dim = pInfo->dim ;
+    int noThread = pInfo->noThread ;
+
+    // multiply two matrics pInfo->A and pInfo->B
+    // put the Product in pInfo->Product
+    int i = 0, j = 0, k = 0;
+
+    for( i = id; i < dim; i+=noThread ) {
+        for( j = 0; j < dim; j++ ) {
+            // initialization of the arr element to 0.F
+            pInfo->Product[i * dim + j] = 0.F;
+            // multiplication of A[i-th row] X B[j-th column]
+            for(k = 0; k < dim; k++) {
+                (pInfo->Product)[i * dim + j]
+                += (pInfo->A)[i * dim + k]
+                * (pInfo->B)[k * dim + j];
+            }
+        }
+    }
+
+    // i-th thread computes only (i + k * noThread)-th rows
+    pthread_exit(0) ;
+}
+```
+
+### error 원인
+
+```
+// ThreadInfo-type
+typedef struct {
+    int id;                    // thread index
+    int noThread;
+    int dim;
+    float *A, *B, *Product;
+} ThreadInfo;
+
+void* MatMul_ThreadFn(void *param);
+
+void MatMul_MT(int dim, float *A, float *B, float *Product, int noThread)
+{
+
+    int i = 0 ;
+    int j = 0 ;
+    // dynamically allocate pthread_t-type array whose length is noThread
+    pthread_t * tid = (pthread_t *)malloc( sizeof(pthread_t)*noThread );
+    // dynamically allocate ThreadInfo-type array whose length is noThread
+    ThreadInfo * threadInfo = (ThreadInfo *)malloc( sizeof(ThreadInfo)*noThread );
+
+    // Repeat for noThread times
+    for( i=0; i<noThread; i++ ) {
+        // Fill threadInfo[i] with appropriate values
+        // threadInfo[i].id = i : i-th thread
+        threadInfo[i].id = i ;
+        threadInfo[i].noThread = noThread ;
+        threadInfo[i].dim = dim ;
+        threadInfo[i].A = A ;
+        threadInfo[i].B = B ;
+        threadInfo[i].Product = Product; // 1. 이 부분이 빠져 있었음....
+        // create child thread passing &aThreadInfo[i] to the thread function
+        pthread_create( &(tid[i]), NULL, MatMul_ThreadFn, &(threadInfo[i]) ) ;
+    }
+
+    // wait for the children threads to terminate
+    for( j=0; j<noThread; j++ ) {
+        // call pthread_join t-times
+        pthread_join(tid[j], NULL) ;
+    }
+
+    // deallocate pthread_t and ThreadInfo array
+    free(tid) ;
+    free(threadInfo) ;
+}
+
+void* MatMul_ThreadFn(void *param)        // thread function
+{
+    ThreadInfo *pInfo = (ThreadInfo *)param;
+
+    // pInfo->Product = (float *)malloc( dim * dim * sizeof(float) ) ;
+    // 3. 위 방법으로 새로운 메모리 할당하여 일시적으로 해결
+    // but 근본적 원인 해결이 아니었   
+    int id = pInfo->id ;
+    int dim = pInfo->dim ;
+    int noThread = pInfo->noThread ;
+
+    // multiply two matrics pInfo->A and pInfo->B
+    // put the Product in pInfo->Product
+    int i = 0, j = 0, k = 0;
+
+    for( i = id; i < dim; i+=noThread ) {
+        for( j = 0; j < dim; j++ ) {
+            // initialization of the arr element to 0.F
+            pInfo->Product[i * dim + j] = 0.F;  
+            // 2. 그래서 이 부분에서 할당받지 않은 메모리 접근을 시도하면서 segfault error
+            // multiplication of A[i-th row] X B[j-th column]
+            for(k = 0; k < dim; k++) {
+                (pInfo->Product)[i * dim + j]
+                += (pInfo->A)[i * dim + k]
+                * (pInfo->B)[k * dim + j];
+            }
+        }
+    }
+    free( pInfo->Product ) ;
+    // 3. 일시적 해결방법. 할당했던 메모리 해제
+    // i-th thread computes only (i + k * noThread)-th rows
+    pthread_exit(0) ;
+}
+```
+
+
+---
+<br><br>
+
+
+
+# 180321 삽질노트
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#ifdef DEBUG
+#define DPRINT(func) func;
+#else
+#define DPRINT(func) ;
+#endif
+
+int binary_search(int *list, int toFind, int start, int end) {
+   DPRINT(printf(">binary_search: start=%d, end=%d\n", start, end));
+
+   int mid = start + (end - start) / 2;   //Integer division
+
+   if (start > end) return -1;            //Stop condition.
+
+   if (list[mid] == toFind)            //Found?
+      return mid;
+
+   if(list[mid]> toFind)
+      return binary_search(list,toFind,start,mid);
+
+   else
+      return binary_search(list,toFind,mid,end);
+}
+
+// a helper function
+int binsearch(int *list, int toFind, int datasize) {
+   DPRINT(printf(">binsearch: toFind=%d, datasize=%d\n", toFind, datasize));
+
+   int a ,b;
+   a = 0;
+   b = datasize;
+
+   return binary_search(list, toFind, a, b);
+}
+
+
+#if 1
+int main(int argc, char *argv[]) {
+   int list[] = { 2, 5, 6, 9, 11, 15, 16, 17, 18, 19 };
+   int n = sizeof(list) / sizeof(list[0]);
+
+   printf("list: ");
+   for (int i = 0; i < n; i++)
+      printf("%d ", list[i]);
+   printf("\n");
+
+   srand((unsigned)time(NULL));
+   for (int i = 0; i < n; i++) {
+      int toFind = rand() % (list[n - 1] + 1);
+      int index = binsearch(list, toFind, n);
+      if (index <= 0)
+         printf("\tlist[  ]=%d \n", toFind);
+      else
+         printf("\tlist[%2d]=%d\n", index, toFind);
+   }
+}
+#endif
+```
+
+### compile 결과
+
+```
+list: 2 5 6 9 11 15 16 17 18 19 check 0
+check 1check 2check 3tofind : 17	list[ 7]=17
+check 3tofind : 17	list[ 7]=17
+check 3tofind : 17	list[ 7]=17
+[1]    7988 segmentation fault  ./a.out
+➜  practice ./a.out
+list: 2 5 6 9 11 15 16 17 18 19 check 0
+check 1check 2check 3tofind : 18	list[ 8]=18
+[1]    7994 segmentation fault  ./a.out
+➜  practice ./a.out
+list: 2 5 6 9 11 15 16 17 18 19 check 0
+check 1check 2check 3tofind : 18	list[ 8]=18
+[1]    8000 segmentation fault  ./a.out
+➜  practice ./a.out
+list: 2 5 6 9 11 15 16 17 18 19 check 0
+[1]    8006 segmentation fault  ./a.out
+
+```
+<br>
+
+### error 원인
+- segmentation fault는 역시 잘못된 메모리 접근일 경우가 많다
+
+```
+if(list[mid]> toFind)
+   return binary_search(list,toFind,start,mid-1);
+else
+   return binary_search(list,toFind,mid+1,end);
+```
+mid-1, mid+1 로 고쳐야 함
+<br>
+
+### 삽질 원인
+- 리눅스에서 종종 출력되는 타이밍이랑 코드가 돌아가고있는 타이밍이 다를 때가 있다.
+- printf로 디버깅을 하되, 값을 확인하여 디버깅을 하는 것은 몰라도 타이밍으로 error 지점을 찾는 것은 어려울 수 있다.
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#ifdef DEBUG
+#define DPRINT(func) func;
+#else
+#define DPRINT(func) ;
+#endif
+
+int binary_search(unsigned int list[], unsigned int toFind, int start, int end) {
+        // (list, index to find, start, end)
+   DPRINT(printf(">binary_search: start=%u, end=%d\n", start, end));
+
+   //int mid = start + (end - start) / 2;   //Integer division
+   int mid = (start+end)/2;
+   if (start > end) return -1;            //Stop condition.
+
+   if (list[mid] == toFind)            //Found?
+      return mid;
+
+   if(list[mid]< toFind)
+      return binary_search(list,toFind, mid+1, end);
+   else
+      return binary_search(list,toFind, start, mid-1);
+}
+
+// a helper function
+int binsearch(unsigned int list[], unsigned int toFind, int datasize) {
+   DPRINT(printf(">binsearch: toFind=%u, datasize=%d\n", toFind, datasize));
+   int a ,b;
+   a = 0;
+   b = datasize;
+        // b = datasize = n
+   return binary_search(list, toFind, a, b-1);
+}
+
+
+#if 1
+int main() {
+   unsigned int list[] = { 2, 5, 6, 9, 11, 15, 16, 17, 18, 19 };
+   int n = sizeof(list) / sizeof(list[0]) ;
+   // list size
+   printf("list: ");
+   for (int i = 0; i < n; i++)
+      printf("%u ", list[i]);
+   printf("\n");
+// no problem
+
+   srand((unsigned)time(NULL));
+   for (int i = 0; i < n; i++) {
+                // execution : n times (list size)
+      unsigned int toFind = rand() % (list[n - 1] + 1);
+          // random index in range of list size
+        printf("tofind : %u\n", toFind) ;
+      int index = binsearch(list, toFind, n);
+
+        printf("%d",index);
+      if (index < 0)
+         printf("\tlist[  ]=%u \n", toFind);
+      else
+         printf("\tlist[%2d]=%u\n", index, toFind);
+   }
+}
+#endif
+```
+- unsigned 랑은 상관없는 이슈인듯

@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Database"
+---
+
+CSV 파일 SQLite 테이블로 열기
+===
+
+#  sqlite3로 csv를 열어보자.
+## SQlite DB에 없는 data를 csv 파일로부터 가져와 테이블로 만들어보자.
+
+1. sqlite3에서 테이블을 생성한다. csv파일의 첫번쨰 행(row)이 테이블에서 각각의 field name이 된다.
+2. csv 파일의 두번째 행부터 각각의 테이블의 행으로 읽어들인다.
+<br >
+
+## Terminal 환경에서 작업
+
+1. command-line shell이 input file을 csv file로 읽으려면 mode를 csv mode로 변경해 주어야 한다.
+
+~~~ bash
+sqlite> .mode csv
+~~~
+
+2. 다음 command를 사용하여 csv file을 지정된 이름의 table로 가져온다.
+
+~~~ bash
+sqlite>.import [file.csv_path] [table_name]
+~~~
+
+3. ```.schema [table_name]``` command를 사용하여 import가 잘 되었는지 확인한다.
+~~~ bash
+sqlite> .schema enrollment_2013_1
+CREATE TABLE enrollment_2013_1(
+  "random.ID" TEXT,
+  "year" TEXT,
+  "semester" TEXT,
+  "subjectCode" TEXT,
+  "num" TEXT
+);
+~~~
+
+![check imported](/img/2018-05-07-Datababse-check_imported.png)
