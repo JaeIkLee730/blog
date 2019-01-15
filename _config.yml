@@ -8,25 +8,21 @@ gems:
 
 # Site settings
 title: "Bluewhale's Blog"
-description: > # this means to ignore newlines until "email:"
+description: >- # this means to ignore newlines until "email:"
    bluewhale's first customizing blog
 email: 21200574@handong.edu
 #blog logo
 logo: "/assets/images/df_logo.png"
 # blog cover
 cover: "/assets/images/background_image_2.jpg"
-
 name: 'Bluewhale'
 author: 'Bluewhale'
 author_image: "/assets/images/author.jpg"
-
 paginate:	15
-
 permalink: /:year/:month/:day/:title.html
-
 timezone: "Asia/Seoul"
 
-url: "https://jaeiklee730.github.io" # the base hostname & protocol for your site
+url: "http://jaeiklee730.github.io" # the base hostname & protocol for your site
 # url: "http://0.0.0.0:4000" # the base hostname & protocol for your site
 baseurl: "/blog"
 #mailchimp: "http://eepurl.com/cywDtP"
