@@ -1,43 +1,79 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely edit after that. If you find
-# yourself editing this file very often, consider using Jekyll's data files
-# feature for the data you need to update frequently.
-#
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
+# Build settings
+gems:
+  - jemoji
+  - jekyll-paginate
+  - jekyll-gist
+  - jekyll-sitemap
+  - jekyll-toc
 
 # Site settings
-# These are used to personalize your new site. If you look in the HTML files,
-# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
-# You can create any custom variable you would like, and they will be accessible
-# in the templates via {{ site.myvariable }}.
-title: Your awesome title
-email: your-email@example.com
-description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  jekyll
+title: "Bluewhale's Blog"
+description: > # this means to ignore newlines until "email:"
+   bluewhale's first customizing blog
+email: 21200574@handong.edu
+#blog logo
+logo: "/assets/images/df_logo.png"
+# blog cover
+cover: "/assets/images/background_image_2.jpg"
 
-# Build settings
-markdown: kramdown
-theme: minima
-plugins:
-  - jekyll-feed
+name: 'Bluewhale'
+author: 'Bluewhale'
+author_image: "/assets/images/author.jpg"
 
-# Exclude from processing.
-# The following items will not be processed, by default. Create a custom list
-# to override the default setting.
-# exclude:
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
+paginate:	15
+
+permalink: /:year/:month/:day/:title.html
+
+timezone: "Asia/Seoul"
+
+url: "https://jaeiklee730.github.io" # the base hostname & protocol for your site
+# url: "http://0.0.0.0:4000" # the base hostname & protocol for your site
+baseurl: "/blog"
+#mailchimp: "http://eepurl.com/cywDtP"
+#feedly: "http://bit.ly/2A8Dkav"
+#used to display twitter cards
+#twitter_handle: "@subicura"
+
+#fill in disqus shortname to use disqus
+#disqus: disqus-shortname
+
+# for thumbnail
+absolute_root_path: /Users/subicura/Workspace/github.com/subicura/subicura.github.io
+
+# tracking & ad code
+fb_app_id: "1611862309129685"
+google_analytics_id: "UA-43194822-1"
+google_ad_client: "ca-pub-2468713653725581"
+google_ad_slot_1_id: "1015072194"
+google_ad_slot_2_id: "8649023787"
+naver_site_verification: "cc257cc7988ed85c9db6c228330b4870f9dfa25f"
+
+# social icons and sharing options
+social:
+  - icon:	twitter
+    url:  "" # https://twitter.com/subicura
+    desc: no-twitter # Follow me on twitter
+    share_url: http://twitter.com/share
+    share_title: ?text=
+    share_link: "&amp;url="
+
+# - icon:	facebook
+#   url:	https://facebook.com/subicura
+#   desc: Connect with me facebook
+#   share_url: https://www.facebook.com/sharer.php
+#   share_title: ?t=
+#   share_link: "&amp;u="
+
+  - icon:	github
+    url:	https://github.com/JaeIkLee730
+    desc:	Fork me on github
+    share_url:
+    share_title:
+    share_link:
+
+#  - icon:	google-plus
+#    url:	https://google.com/???
+#    desc:	Add me on google+
+#    share_url:
+#    share_title:
+#    share_link:
