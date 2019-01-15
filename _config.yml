@@ -22,7 +22,7 @@ paginate:	15
 permalink: /:year/:month/:day/:title.html
 timezone: "Asia/Seoul"
 
-url: "http://jaeiklee730.github.io" # the base hostname & protocol for your site
+url: "http://jaeiklee730.github.io/blog" # the base hostname & protocol for your site
 # url: "http://0.0.0.0:4000" # the base hostname & protocol for your site
 baseurl: "/blog"
 #mailchimp: "http://eepurl.com/cywDtP"
