@@ -24,7 +24,7 @@ timezone: "Asia/Seoul"
 
 url: "http://jaeiklee730.github.io/blog" # the base hostname & protocol for your site
 # url: "http://0.0.0.0:4000" # the base hostname & protocol for your site
-baseurl: "/blog"
+baseurl: ""
 #mailchimp: "http://eepurl.com/cywDtP"
 #feedly: "http://bit.ly/2A8Dkav"
 #used to display twitter cards
