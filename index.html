@@ -86,10 +86,10 @@ layout: default
       {% for post in paginator.posts %}
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting" role="article">
           <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-            <meta itemprop="name" content="{{ site.title }}" />
-            <meta itemprop="url" content="{{ site.url }}{{site.baseurl}}" />
+            <meta itemprop="name" content="{{ site.title }}title" />
+            <meta itemprop="url" content="{{ site.url }}" />
             <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-              <meta itemprop="url" content="{{site.baseurl}}{{ site.logo }}" />
+              <meta itemprop="url" content="{{site.url}}{{ site.logo }}" />
             </div>
           </div>
           <div itemprop="author" itemscope itemtype="http://schema.org/Person">
