@@ -42,17 +42,17 @@ layout: default
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting" role="article">
           <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
             <meta itemprop="name" content="{{ site.title }}" />
-            <meta itemprop="url" content="{{ site.url }}" />
+            <meta itemprop="url" content="{{ site.url }}{{site.baseurl}}" />
             <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-              <meta itemprop="url" content="{{ site.url }}{{ site.logo }}" />
+              <meta itemprop="url" content="{{ site.url }}{{site.baseurl}}{{ site.logo }}" />
             </div>
           </div>
           <div itemprop="author" itemscope itemtype="http://schema.org/Person">
             <meta itemprop="name" content="{{ site.author }}" />
-            <meta itemprop="url" content="{{ site.url }}/about" />
+            <meta itemprop="url" content="{{ site.url }}{{site.baseurl}}/about" />
           </div>
           <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
-            <meta itemprop="url" content="{{ site.url }}{{ site.author_image }}" />
+            <meta itemprop="url" content="{{ site.url }}{{site.baseurl}}{{ site.author_image }}" />
           </div>
           <meta itemprop="headline" content="{{ post.title }}" />
           <meta itemprop="mainEntityOfPage" content="{{ post.url }}" />
@@ -71,7 +71,7 @@ layout: default
               {% if post.fb_social_baseurl %} 
                 <span class="fb-comments-count" data-href="{{ post.fb_social_baseurl }}{{ post.url }}"></span>
               {% else %}
-                <span class="fb-comments-count" data-href="{{ site.url }}{{ post.url }}"></span>
+                <span class="fb-comments-count" data-href="{{ site.url }}{{site.baseurl}}{{ post.url }}"></span>
               {% endif %}
             </div>
           </div>
@@ -87,17 +87,17 @@ layout: default
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting" role="article">
           <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
             <meta itemprop="name" content="{{ site.title }}" />
-            <meta itemprop="url" content="{{ site.url }}" />
+            <meta itemprop="url" content="{{ site.url }}{{site.baseurl}}" />
             <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-              <meta itemprop="url" content="{{ site.url }}{{ site.logo }}" />
+              <meta itemprop="url" content="{{ site.url }}{{site.baseurl}}{{ site.logo }}" />
             </div>
           </div>
           <div itemprop="author" itemscope itemtype="http://schema.org/Person">
             <meta itemprop="name" content="{{ site.author }}" />
-            <meta itemprop="url" content="{{ site.url }}/about" />
+            <meta itemprop="url" content="{{ site.url }}{{site.baseurl}}/about" />
           </div>
           <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
-            <meta itemprop="url" content="{{ site.url }}{{ site.author_image }}" />
+            <meta itemprop="url" content="{{ site.url }}{{site.baseurl}}{{ site.author_image }}" />
           </div>
           <meta itemprop="headline" content="{{ post.title }}" />
           <meta itemprop="mainEntityOfPage" content="{{ post.url }}" />
@@ -123,7 +123,7 @@ layout: default
               {% if post.fb_social_baseurl %} 
                 <span class="fb-comments-count" data-href="{{ post.fb_social_baseurl }}{{ post.url }}"></span>
               {% else %}
-                <span class="fb-comments-count" data-href="{{ site.url }}{{ post.url }}"></span>
+                <span class="fb-comments-count" data-href="{{ site.url }}{{site.baseurl}}{{ post.url }}"></span>
               {% endif %}
             </div>
           </div>
